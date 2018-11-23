@@ -8,6 +8,7 @@ target 'LoginDemo' do
   # Pods for LoginDemo
 
   pod 'SkyFloatingLabelTextField', '~> 3.0'
+  pod 'GoogleSignIn'
 
   target 'LoginDemoTests' do
     inherit! :search_paths

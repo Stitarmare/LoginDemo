@@ -7,15 +7,23 @@
 //
 
 import UIKit
+import GoogleSignIn
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    let clintId = "653607253303-1g0u751q5oqgnkgmk99otnlaegkh274s.apps.googleusercontent.com"//"653607253303-1g0u751q5oqgnkgmk99otnlaegkh274s.apps.googleusercontent.com"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        //Setting google clint key
+        GIDSignIn.sharedInstance().clientID = clintId
+        
+        
+        
         window = UIWindow(frame: UIScreen.main.bounds)
         let storybord = UIStoryboard(name: "Main", bundle: nil)
         let login = storybord.instantiateViewController(withIdentifier: "LoginController") as? LoginController
@@ -46,6 +54,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return GIDSignIn.sharedInstance().handle(url as URL?,
+                                                 sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+                                                 annotation: options[UIApplication.OpenURLOptionsKey.annotation])
+    }
 
 }
 

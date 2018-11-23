@@ -8,6 +8,7 @@
 
 import UIKit
 import SkyFloatingLabelTextField
+import GoogleSignIn
 
 class LoginController: UIViewController {
 
@@ -26,6 +27,13 @@ class LoginController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //setting delegate mmethods for google
+        GIDSignIn.sharedInstance().delegate = self
+        
+        //Setting google ui delegate methods
+        GIDSignIn.sharedInstance().uiDelegate = self
+        
         
     }
 
@@ -46,20 +54,21 @@ class LoginController: UIViewController {
     }
     
     @IBAction func singUpButtonTapped(_ sender: Any) {
-        showTabBar()
+        
     }
     
     @IBAction func facebookLoginButtonTapped(_ sender: Any) {
-       
-        showTabBar()
+       GIDSignIn.sharedInstance()?.signIn()
+        
     }
     
     @IBAction func googleLoginButtonTapped(_ sender: Any) {
-        showTabBar()
+    
+        GIDSignIn.sharedInstance()?.signIn()
     }
     
     @IBAction func twitterLoginButtonTapped(_ sender: Any) {
-        showTabBar()
+        GIDSignIn.sharedInstance()?.signIn()
     }
     
 }
@@ -81,5 +90,55 @@ extension LoginController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         self.emailTextField.errorMessage = nil
         self.passwordTextField.errorMessage = nil
+    }
+}
+
+//MARK: Google sing in delegate methods
+extension LoginController: GIDSignInDelegate {
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!,
+              withError error: Error!) {
+        if let error = error {
+            print("\(error.localizedDescription)")
+        } else {
+            // Perform any operations on signed in user here.
+            let userId = user.userID                  // For client-side use only!
+            let idToken = user.authentication.idToken // Safe to send to the server
+            let fullName = user.profile.name
+            let givenName = user.profile.givenName
+            let familyName = user.profile.familyName
+            let email = user.profile.email
+            
+            print("\(email)  \(fullName)")
+            showTabBar()
+            // ...
+        }
+    }
+
+    
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!,
+              withError error: Error!) {
+        // Perform any operations when the user disconnects from app here.
+        // ...
+    }
+    
+}
+
+//MARK: google ui delegate methods
+extension LoginController: GIDSignInUIDelegate {
+    // pressed the Sign In button
+    func sign(inWillDispatch signIn: GIDSignIn!, error: Error?) {
+        //UIActivityIndicatorView.stopAnimating()
+    }
+    
+    // Present a view that prompts the user to sign in with Google
+    func sign(_ signIn: GIDSignIn!,
+              present viewController: UIViewController!) {
+        self.present(viewController, animated: true, completion: nil)
+    }
+    
+    // Dismiss the "Sign in with Google" view
+    func sign(_ signIn: GIDSignIn!,
+              dismiss viewController: UIViewController!) {
+        self.dismiss(animated: true, completion: nil)
     }
 }
